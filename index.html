@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MathPintar: Ultimate</title>
+    <title>MathPintar: Ultimate FX</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -12,7 +12,7 @@
         :root {
             /* Warna Tema */
             --primary: #6c5ce7;
-            --glass-bg: rgba(255, 255, 255, 0.90); /* Sedikit lebih pekat supaya tulisan jelas */
+            --glass-bg: rgba(255, 255, 255, 0.90);
             --glass-border: rgba(255, 255, 255, 0.5);
             --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
             
@@ -60,9 +60,11 @@
             display: block; width: 100%; border: none; padding: 15px;
             border-radius: 20px; font-size: 1.1rem; font-family: 'Fredoka'; color: #fff;
             cursor: pointer; margin-bottom: 10px; text-transform: uppercase;
-            transition: all 0.1s; text-shadow: 0 2px 0 rgba(0,0,0,0.1); position: relative;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
+            text-shadow: 0 2px 0 rgba(0,0,0,0.1); position: relative;
+            display: flex; align-items: center; justify-content: center;
         }
-        .btn-candy:active { transform: translateY(4px); box-shadow: none !important; }
+        .btn-candy:active { transform: scale(0.95); box-shadow: none !important; }
         
         .c-blue { background: var(--btn-blue-light); box-shadow: 0 5px 0 var(--btn-blue); }
         .c-green { background: var(--btn-green-light); box-shadow: 0 5px 0 var(--btn-green); }
@@ -70,6 +72,46 @@
         .c-yellow { background: var(--btn-yellow-light); color: #636e72; box-shadow: 0 5px 0 var(--btn-yellow); }
         .c-purple { background: var(--btn-purple); box-shadow: 0 5px 0 var(--btn-purple-dark); }
 
+        /* --- TITLE SCREEN ANIMATIONS --- */
+        .title-bg-icon {
+            position: absolute; font-size: 2rem; color: rgba(255,255,255,0.2); font-weight: bold;
+            animation: floatUp 8s linear infinite; z-index: 0;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .hero-mascot {
+            font-size: 7rem; 
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+            animation: bounceMascot 2s infinite ease-in-out;
+            z-index: 2; position: relative;
+        }
+        @keyframes bounceMascot {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .title-text {
+            font-size: 3rem; color: white; text-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            margin-bottom: 5px; animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .loading-container {
+            width: 80%; height: 10px; background: rgba(0,0,0,0.2); border-radius: 10px; margin: 20px auto; overflow: hidden;
+            position: relative; z-index: 2;
+        }
+        .loading-fill {
+            height: 100%; background: #fff; width: 0%; border-radius: 10px;
+            animation: loadProgress 2s ease-out forwards;
+        }
+        @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+
+        #start-btn-container { opacity: 0; animation: fadeIn 0.5s ease-out forwards 2.2s; z-index: 2; width: 80%; }
+        
         /* --- HOME STYLES --- */
         .profile-header { display: flex; align-items: center; gap: 15px; }
         .avatar-circle { width: 60px; height: 60px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 3px solid var(--primary); }
@@ -84,27 +126,89 @@
         .fact-box { background: #ffeaa7; color: #d35400; padding: 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; border: 2px dashed #fdcb6e; position: relative; }
         .fact-icon { position: absolute; top: -15px; right: -10px; font-size: 2rem; transform: rotate(15deg); }
 
-        /* --- NOTES STYLES (UPDATED) --- */
-        .note-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #2d3436; }
+        /* --- NEW NOTES STYLES (INTERACTIVE) --- */
+        .note-card-interactive {
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer; position: relative; overflow: hidden;
+            animation: slideUpStagger 0.5s ease-out both;
+        }
+        /* Stagger Delay for 5 cards */
+        .note-card-interactive:nth-child(2) { animation-delay: 0.1s; }
+        .note-card-interactive:nth-child(3) { animation-delay: 0.2s; }
+        .note-card-interactive:nth-child(4) { animation-delay: 0.3s; }
+        .note-card-interactive:nth-child(5) { animation-delay: 0.4s; }
+        .note-card-interactive:nth-child(6) { animation-delay: 0.5s; }
+
+        .note-card-interactive:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+        
+        .note-content-hidden {
+            max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s ease-in-out;
+        }
+        .note-expanded .note-content-hidden {
+            max-height: 300px; opacity: 1; margin-top: 15px;
+        }
+        
+        .note-icon-float {
+            animation: floatIcon 3s ease-in-out infinite; display: inline-block;
+        }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+        .note-header { display: flex; align-items: center; gap: 10px; color: #2d3436; }
+        .note-arrow { margin-left: auto; transition: 0.3s; opacity: 0.5; }
+        .note-expanded .note-arrow { transform: rotate(180deg); opacity: 1; color: var(--primary); }
+
         .formula-box { background: #fff; border: 2px dashed #b2bec3; border-radius: 10px; padding: 10px; margin: 5px 0 15px 0; text-align: center; font-weight: 700; color: var(--primary); font-family: 'Fredoka'; font-size: 0.95rem; }
         .table-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .table-row:last-child { border-bottom: none; }
-
-        /* --- NOTIFICATION & MODALS --- */
-        .notif-btn { font-size:1.2rem; background:rgba(255,255,255,0.5); padding:8px 12px; border-radius:15px; cursor:pointer; position: relative; }
-        .notif-badge { position: absolute; top: -5px; right: -5px; width: 15px; height: 15px; background: red; border-radius: 50%; border: 2px solid white; display: block; }
-        #notif-overlay {
-            position: absolute; top: 70px; right: 20px; width: 250px;
-            background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            padding: 15px; z-index: 999; display: none; transform-origin: top right;
-            animation: popIn 0.2s ease-out; border: 1px solid rgba(0,0,0,0.05);
-        }
-        .notif-item { border-bottom: 1px solid #eee; padding: 10px 0; font-size: 0.9rem; color: #555; }
 
         /* --- RECORD LIST --- */
         .record-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.5); border-radius: 15px; margin-bottom: 10px; }
         .record-score { font-family: 'Fredoka'; font-size: 1.2rem; color: var(--primary); font-weight: bold; }
         .record-date { font-size: 0.8rem; color: #888; }
+
+        /* --- NEW GAMEPLAY ANIMATIONS --- */
+        /* Smooth progress bar shimmer */
+        #p-bar {
+            background: linear-gradient(90deg, #6c5ce7, #a29bfe, #6c5ce7);
+            background-size: 200% 100%;
+            animation: shimmerBar 2s infinite linear;
+        }
+        @keyframes shimmerBar { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Card Slide In Effect */
+        .slide-in-right { animation: slideInRight 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px) scale(0.9); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        /* Button Answer Effects */
+        .btn-correct-anim { 
+            animation: popSuccess 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both !important; 
+            background: #00b894 !important; border: 2px solid #fff; 
+        }
+        .btn-wrong-anim { 
+            animation: shakeError 0.5s ease-in-out both !important; 
+            background: #d63031 !important; 
+        }
+
+        @keyframes popSuccess { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        @keyframes shakeError { 
+            0%, 100% { transform: translateX(0); } 
+            20% { transform: translateX(-8px) rotate(-2deg); } 
+            40% { transform: translateX(8px) rotate(2deg); } 
+            60% { transform: translateX(-4px); } 
+            80% { transform: translateX(4px); } 
+        }
+
+        @keyframes slideUpStagger { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- GAMEPLAY OPTIONS GRID --- */
+        #options-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 4 pilihan (2x2) */
+            gap: 15px; /* Lebih jarak */
+        }
+        #options-area button { margin-bottom: 0; height: 100%; min-height: 70px; font-size: 1.2rem; }
 
         /* --- NAVIGATION --- */
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; transition: 0.4s; }
@@ -126,11 +230,19 @@
         .nav-btn { font-size: 1.8rem; opacity: 0.4; transition: 0.3s; transform: scale(0.9); cursor: pointer; }
         .nav-btn.active { opacity: 1; transform: scale(1.2) translateY(-5px); color: var(--primary); }
 
-        /* --- ANIMATIONS --- */
+        /* --- RESULT ANIMATIONS --- */
+        @keyframes bounceIn { 0% { opacity: 0; transform: scale(0.3); } 50% { opacity: 1; transform: scale(1.1); } 70% { transform: scale(0.9); } 100% { transform: scale(1); } }
+        @keyframes sadShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+
+        .anim-high { animation: bounceIn 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) both; color: #00b894 !important; }
+        .anim-mid { animation: pulse 1s infinite; color: #fdcb6e !important; }
+        .anim-low { animation: sadShake 0.6s ease-in-out; color: #d63031 !important; }
+
+        /* --- GENERAL ANIMATIONS --- */
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     </style>
 </head>
@@ -147,10 +259,21 @@
             <div class="notif-item">🏆 Cuba pecahkan rekod lama!</div>
         </div>
 
-        <div id="splash" class="screen active-screen" style="background: linear-gradient(180deg, #6c5ce7 0%, #a29bfe 100%); justify-content: center; align-items: center; color: white; z-index: 100;">
-            <div style="font-size: 5rem; animation: slideUp 1s infinite alternate;">🚀</div>
-            <h1 style="font-size: 2.5rem; margin-top:10px;">MathPintar</h1>
-            <p>Edisi Ultimate</p>
+        <div id="splash" class="screen active-screen" style="background: linear-gradient(180deg, #6c5ce7 0%, #a29bfe 100%); align-items: center; justify-content: center; text-align: center; overflow: hidden; z-index: 200;">
+            <div class="title-bg-icon" style="left: 10%; animation-duration: 7s;">+</div>
+            <div class="title-bg-icon" style="left: 30%; animation-duration: 9s; animation-delay: 1s;">×</div>
+            <div class="title-bg-icon" style="left: 70%; animation-duration: 6s; animation-delay: 2s;">÷</div>
+            <div class="title-bg-icon" style="left: 85%; animation-duration: 8s; animation-delay: 0.5s;">-</div>
+            
+            <h1 class="title-text">Math<br>Pintar</h1>
+            <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 20px; z-index: 2;">Edisi Ultimate</p>
+            <div class="hero-mascot">🦊</div>
+            <div class="loading-container">
+                <div class="loading-fill"></div>
+            </div>
+            <div id="start-btn-container">
+                <button onclick="startGame()" class="btn-candy c-yellow" style="padding: 20px; font-size: 1.3rem; border-bottom: 6px solid #e1b12c; animation: pulse 1.5s infinite;">🚀 MULA SEKARANG</button>
+            </div>
         </div>
 
         <div id="main-app" class="screen hidden">
@@ -164,7 +287,6 @@
             <div class="content-scroll" onclick="closeNotif()">
                 
                 <div id="tab-home" class="tab-content active">
-                    
                     <div class="glass-card profile-header">
                         <div class="avatar-circle">🦊</div>
                         <div style="flex:1;">
@@ -195,15 +317,9 @@
                             <div class="mission-check">✓</div>
                             <span>Jawab 1 Kuiz</span>
                         </div>
-                        <div class="mission-item" onclick="toggleMission(this)">
-                            <div class="mission-check">✓</div>
-                            <span>Semak Nota Rumus</span>
-                        </div>
                     </div>
 
-                    <button onclick="navTo('quiz')" class="btn-candy c-purple" style="padding: 25px; animation: pulse 2s infinite;">
-                        🎮 MULA BERMAIN
-                    </button>
+                    <button onclick="navTo('quiz')" class="btn-candy c-purple" style="padding: 25px; animation: pulse 2s infinite;">🎮 MULA BERMAIN</button>
                     
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                         <button onclick="navTo('notes')" class="btn-candy c-yellow">📖 Nota</button>
@@ -228,17 +344,19 @@
                         <div style="background:rgba(255,255,255,0.5); height:10px; border-radius:5px; margin-bottom:20px; overflow:hidden;">
                             <div id="p-bar" style="width:0%; height:100%; background:var(--primary); transition:0.5s;"></div>
                         </div>
-                        <div class="glass-card" style="min-height:100px; display:flex; align-items:center; justify-content:center; text-align:center;">
-                            <h2 id="q-text" style="color:#2d3436; line-height:1.4;">...</h2>
+                        
+                        <div id="question-card-cont" class="glass-card" style="min-height:140px; display:flex; align-items:center; justify-content:center; text-align:center; margin-bottom:25px;">
+                            <h2 id="q-text" style="color:#2d3436; line-height:1.4; font-size: 2.2rem;">...</h2>
                         </div>
-                        <div id="options-area" style="display:grid; gap:10px;"></div>
+                        
+                        <div id="options-area"></div>
                     </div>
 
                     <div id="result-screen" style="display: none; text-align: center;">
-                        <h1 style="font-size:4rem;">🏆</h1>
-                        <h2 style="color:#2d3436;">Markah Anda</h2>
-                        <h1 id="final-score" style="font-size:3.5rem; color:var(--primary); margin: 10px 0;">0</h1>
-                        <p id="xp-gained-text" style="color:#00b894; font-weight:bold; margin-bottom:20px;">+0 XP Diperoleh!</p>
+                        <h1 id="result-emoji" style="font-size:5rem;">🏆</h1>
+                        <h2 id="result-title" style="color:#2d3436; margin-top:10px;">Markah Anda</h2>
+                        <h1 id="final-score" style="font-size:4.5rem; color:var(--primary); margin: 5px 0;">0</h1>
+                        <p id="xp-gained-text" style="color:#636e72; font-weight:bold; margin-bottom:30px;">+0 XP Diperoleh!</p>
                         
                         <button onclick="navTo('quiz')" class="btn-candy c-blue">Main Lagi 🔄</button>
                         <button onclick="navTo('records')" class="btn-candy c-yellow">Lihat Rekod 📜</button>
@@ -247,46 +365,77 @@
 
                 <div id="tab-notes" class="tab-content">
                     <h2 style="text-align:center; margin-bottom:20px; color:#2d3436;">Nota Pintar 💡</h2>
+                    <p style="text-align:center; font-size:0.8rem; color:#888; margin-bottom:15px;">(Klik kotak untuk baca)</p>
 
-                    <div class="glass-card" style="border-left: 8px solid #00b894; text-align:left;">
-                        <div class="note-header"><span style="font-size:1.5rem;">🔑</span><h3>Kata Kunci Operasi</h3></div>
-                        <div class="table-row"><span style="color:#0984e3; font-weight:bold;">➕ Tambah</span> <span>Jumlah, Hasil tambah</span></div>
-                        <div class="table-row"><span style="color:#d63031; font-weight:bold;">➖ Tolak</span> <span>Beza, Baki, Selisih</span></div>
-                        <div class="table-row"><span style="color:#e17055; font-weight:bold;">✖️ Darab</span> <span>Daripada, Kali</span></div>
-                        <div class="table-row"><span style="color:#6c5ce7; font-weight:bold;">➗ Bahagi</span> <span>Agihkan, Sama rata</span></div>
+                    <div class="glass-card note-card-interactive" onclick="toggleNote(this)" style="border-left: 8px solid #00b894; text-align:left;">
+                        <div class="note-header">
+                            <span class="note-icon-float" style="font-size:1.5rem;">🔑</span>
+                            <h3>Kata Kunci Operasi</h3>
+                            <div class="note-arrow">▼</div>
+                        </div>
+                        <div class="note-content-hidden">
+                            <div class="table-row" style="margin-top:10px;"><span style="color:#0984e3; font-weight:bold;">➕ Tambah</span> <span>Jumlah, Hasil tambah</span></div>
+                            <div class="table-row"><span style="color:#d63031; font-weight:bold;">➖ Tolak</span> <span>Beza, Baki, Selisih</span></div>
+                            <div class="table-row"><span style="color:#e17055; font-weight:bold;">✖️ Darab</span> <span>Daripada, Kali</span></div>
+                            <div class="table-row"><span style="color:#6c5ce7; font-weight:bold;">➗ Bahagi</span> <span>Agihkan, Sama rata</span></div>
+                        </div>
                     </div>
 
-                    <div class="glass-card" style="border-left: 8px solid #ff7675; text-align:left;">
-                        <div class="note-header"><span style="font-size:1.5rem;">🍕</span><h3>Pecahan & Peratus</h3></div>
-                        <div class="table-row"><span>1/2 (Separuh)</span> <b>50% (0.5)</b></div>
-                        <div class="table-row"><span>1/4 (Suku)</span> <b>25% (0.25)</b></div>
-                        <div class="table-row"><span>3/4 (3 Suku)</span> <b>75% (0.75)</b></div>
-                        <div class="table-row"><span>1/10</span> <b>10% (0.1)</b></div>
+                    <div class="glass-card note-card-interactive" onclick="toggleNote(this)" style="border-left: 8px solid #ff7675; text-align:left;">
+                        <div class="note-header">
+                            <span class="note-icon-float" style="font-size:1.5rem; animation-delay:0.5s;">🍕</span>
+                            <h3>Pecahan & Peratus</h3>
+                            <div class="note-arrow">▼</div>
+                        </div>
+                        <div class="note-content-hidden">
+                            <div class="table-row" style="margin-top:10px;"><span>1/2 (Separuh)</span> <b>50% (0.5)</b></div>
+                            <div class="table-row"><span>1/4 (Suku)</span> <b>25% (0.25)</b></div>
+                            <div class="table-row"><span>3/4 (3 Suku)</span> <b>75% (0.75)</b></div>
+                            <div class="table-row"><span>1/10</span> <b>10% (0.1)</b></div>
+                        </div>
                     </div>
 
-                    <div class="glass-card" style="border-left: 8px solid #74b9ff; text-align:left;">
-                        <div class="note-header"><span style="font-size:1.5rem;">📐</span><h3>Rumus Bentuk</h3></div>
-                        <p style="font-weight:bold;">Luas Segiempat:</p>
-                        <div class="formula-box">Panjang × Lebar</div>
-                        <p style="font-weight:bold;">Luas Segitiga:</p>
-                        <div class="formula-box">½ × Tapak × Tinggi</div>
-                        <div class="table-row"><span>Kubus</span> <b>12 Sisi, 6 Muka Rata</b></div>
+                    <div class="glass-card note-card-interactive" onclick="toggleNote(this)" style="border-left: 8px solid #74b9ff; text-align:left;">
+                        <div class="note-header">
+                            <span class="note-icon-float" style="font-size:1.5rem; animation-delay:1s;">📐</span>
+                            <h3>Rumus Bentuk</h3>
+                            <div class="note-arrow">▼</div>
+                        </div>
+                        <div class="note-content-hidden">
+                            <p style="font-weight:bold; margin-top:10px;">Luas Segiempat:</p>
+                            <div class="formula-box">Panjang × Lebar</div>
+                            <p style="font-weight:bold;">Luas Segitiga:</p>
+                            <div class="formula-box">½ × Tapak × Tinggi</div>
+                            <div class="table-row"><span>Kubus</span> <b>12 Sisi, 6 Muka Rata</b></div>
+                        </div>
                     </div>
 
-                    <div class="glass-card" style="border-left: 8px solid #a29bfe; text-align:left;">
-                        <div class="note-header"><span style="font-size:1.5rem;">⚖️</span><h3>Unit & Masa</h3></div>
-                        <div class="table-row"><span>1 kg</span> <b>1000 g</b></div>
-                        <div class="table-row"><span>1 km</span> <b>1000 m</b></div>
-                        <div class="table-row"><span>1 liter</span> <b>1000 ml</b></div>
-                        <div class="table-row" style="margin-top:10px;"><span>1 Dekad</span> <b>10 Tahun</b></div>
-                        <div class="table-row"><span>1 Abad</span> <b>100 Tahun</b></div>
+                    <div class="glass-card note-card-interactive" onclick="toggleNote(this)" style="border-left: 8px solid #a29bfe; text-align:left;">
+                        <div class="note-header">
+                            <span class="note-icon-float" style="font-size:1.5rem; animation-delay:1.5s;">⚖️</span>
+                            <h3>Unit & Masa</h3>
+                            <div class="note-arrow">▼</div>
+                        </div>
+                        <div class="note-content-hidden">
+                            <div class="table-row" style="margin-top:10px;"><span>1 kg</span> <b>1000 g</b></div>
+                            <div class="table-row"><span>1 km</span> <b>1000 m</b></div>
+                            <div class="table-row"><span>1 liter</span> <b>1000 ml</b></div>
+                            <div class="table-row"><span>1 Dekad</span> <b>10 Tahun</b></div>
+                            <div class="table-row"><span>1 Abad</span> <b>100 Tahun</b></div>
+                        </div>
                     </div>
 
-                    <div class="glass-card" style="border-left: 8px solid #fd79a8; text-align:left;">
-                        <div class="note-header"><span style="font-size:1.5rem;">💰</span><h3>Wang & Koordinat</h3></div>
-                        <div class="table-row"><span>RM 1</span> <b>100 sen</b></div>
-                        <p style="font-weight:bold; margin-top:10px;">Tips Koordinat (x, y):</p>
-                        <div class="formula-box" style="font-size:0.9rem; margin-bottom:5px;">"Masuk rumah (x), naik tangga (y)"</div>
+                    <div class="glass-card note-card-interactive" onclick="toggleNote(this)" style="border-left: 8px solid #fd79a8; text-align:left;">
+                        <div class="note-header">
+                            <span class="note-icon-float" style="font-size:1.5rem; animation-delay:0.2s;">💰</span>
+                            <h3>Wang & Koordinat</h3>
+                            <div class="note-arrow">▼</div>
+                        </div>
+                        <div class="note-content-hidden">
+                            <div class="table-row" style="margin-top:10px;"><span>RM 1</span> <b>100 sen</b></div>
+                            <p style="font-weight:bold; margin-top:10px;">Tips Koordinat (x, y):</p>
+                            <div class="formula-box" style="font-size:0.9rem; margin-bottom:5px;">"Masuk rumah (x), naik tangga (y)"</div>
+                        </div>
                     </div>
 
                     <button onclick="navTo('home')" class="btn-candy c-yellow" style="width:120px; margin:20px auto 0;">Kembali</button>
@@ -294,11 +443,9 @@
 
                 <div id="tab-records" class="tab-content">
                     <h2 style="text-align:center; margin-bottom:20px; color:#2d3436;">Sejarah Markah 🏆</h2>
-                    
                     <div id="records-list">
                         <div class="glass-card" style="opacity:0.6; text-align:center;">Belum ada rekod.<br>Main dulu!</div>
                     </div>
-
                     <button onclick="navTo('home')" class="btn-candy c-yellow" style="width:120px; margin:20px auto 0;">Kembali</button>
                 </div>
 
@@ -327,55 +474,84 @@
             "Pecahan 1/2 dipanggil separuh."
         ];
 
-        // --- QUESTION DATABASE (30+ Questions) ---
+        // --- QUESTION DATABASE ---
         const questionData = {
             easy: [
-                {q:"2 + 3",o:["5","6"],a:0}, {q:"10 - 4",o:["6","5"],a:0}, {q:"3 + 3",o:["6","9"],a:0}, 
-                {q:"8 - 4",o:["4","2"],a:0}, {q:"1 + 1",o:["2","11"],a:0}, {q:"5 + 5",o:["10","55"],a:0}, 
-                {q:"Separuh dari 4",o:["2","1"],a:0}, {q:"9 + 1",o:["10","91"],a:0}, {q:"Jari sebelah tangan?",o:["5","10"],a:0}, 
-                {q:"Bentuk tayar?",o:["Bulat","Petak"],a:0}, {q:"Nombor selepas 7",o:["8","9"],a:0}, {q:"7 - 0",o:["7","0"],a:0}
+                {q:"2 + 3", o:["4", "5", "6", "8"], a:1}, 
+                {q:"10 - 4", o:["5", "4", "6", "7"], a:2}, 
+                {q:"3 + 3", o:["6", "9", "5", "8"], a:0}, 
+                {q:"8 - 4", o:["2", "6", "3", "4"], a:3}, 
+                {q:"1 + 1", o:["11", "2", "3", "1"], a:1}, 
+                {q:"5 + 5", o:["55", "10", "15", "50"], a:1}, 
+                {q:"Separuh dari 4", o:["1", "3", "2", "4"], a:2}, 
+                {q:"9 + 1", o:["10", "91", "19", "9"], a:0}, 
+                {q:"Jari sebelah tangan?", o:["4", "5", "6", "10"], a:1}, 
+                {q:"Bentuk tayar?", o:["Petak", "Segitiga", "Bulat", "Bujur"], a:2}, 
+                {q:"Nombor selepas 7", o:["8", "6", "9", "10"], a:0}, 
+                {q:"7 - 0", o:["0", "70", "1", "7"], a:3}
             ],
             medium: [
-                {q:"5 x 5",o:["25","10"],a:0}, {q:"12 ÷ 4",o:["3","4"],a:0}, {q:"1/2 + 1/2",o:["1","1/4"],a:0}, 
-                {q:"RM10 - RM2",o:["RM8","RM9"],a:0}, {q:"4.5 + 0.5",o:["5.0","4.55"],a:0}, {q:"6 x 4",o:["24","10"],a:0}, 
-                {q:"Minit dalam 1 jam",o:["60","100"],a:0}, {q:"20 ÷ 2",o:["10","2"],a:0}, {q:"Pecahan 0.5",o:["1/2","1/5"],a:0}, 
-                {q:"Sisi kubus ada?",o:["12","6"],a:0}, {q:"3/4 dalam perpuluhan",o:["0.75","0.25"],a:0}, {q:"Perimeter segiempat 3cm",o:["12","9"],a:0}
+                {q:"5 x 5", o:["10", "20", "25", "55"], a:2}, 
+                {q:"12 ÷ 4", o:["3", "4", "2", "6"], a:0}, 
+                {q:"1/2 + 1/2", o:["1/4", "1", "2", "Setengah"], a:1}, 
+                {q:"RM10 - RM2", o:["RM9", "RM8", "RM7", "RM12"], a:1}, 
+                {q:"4.5 + 0.5", o:["5.0", "4.55", "5.5", "4.0"], a:0}, 
+                {q:"6 x 4", o:["10", "18", "24", "28"], a:2}, 
+                {q:"Minit dalam 1 jam", o:["100", "50", "60", "30"], a:2}, 
+                {q:"20 ÷ 2", o:["2", "10", "5", "20"], a:1}, 
+                {q:"Pecahan 0.5", o:["1/5", "1/2", "1/4", "2/5"], a:1}, 
+                {q:"Sisi kubus ada?", o:["6", "8", "10", "12"], a:3}, 
+                {q:"3/4 dalam perpuluhan", o:["0.25", "0.75", "0.50", "0.34"], a:1}, 
+                {q:"Perimeter segiempat 3cm", o:["9", "6", "12", "15"], a:2}
             ],
             hard: [
-                {q:"25% daripada 200",o:["50","25"],a:0}, {q:"0.2 x 0.2",o:["0.04","0.4"],a:0}, {q:"3/4 dalam peratus",o:["75%","25%"],a:0}, 
-                {q:"Sudut tegak ialah",o:["90°","180°"],a:0}, {q:"1.5 kg = ___ g",o:["1500","150"],a:0}, {q:"Punca kuasa dua 81",o:["9","8"],a:0}, 
-                {q:"3 Dekad = ___ thn",o:["30","300"],a:0}, {q:"Luas (P:5, L:4)",o:["20","9"],a:0}, {q:"-5 + 10",o:["5","-5"],a:0}, 
-                {q:"Jam 2200 ialah",o:["10 p.m.","8 p.m."],a:0}, {q:"Isipadu kubus 2cm",o:["8","6"],a:0}, {q:"Koordinat Asalan",o:["(0,0)","(1,1)"],a:0}
+                {q:"25% daripada 200", o:["25", "40", "100", "50"], a:3}, 
+                {q:"0.2 x 0.2", o:["0.4", "0.04", "0.22", "0.40"], a:1}, 
+                {q:"3/4 dalam peratus", o:["25%", "50%", "75%", "80%"], a:2}, 
+                {q:"Sudut tegak ialah", o:["45°", "90°", "180°", "360°"], a:1}, 
+                {q:"1.5 kg = ___ g", o:["150", "1500", "1050", "15000"], a:1}, 
+                {q:"Punca kuasa dua 81", o:["8", "7", "9", "81"], a:2}, 
+                {q:"3 Dekad = ___ thn", o:["30", "300", "13", "33"], a:0}, 
+                {q:"Luas (P:5, L:4)", o:["9", "25", "20", "10"], a:2}, 
+                {q:"-5 + 10", o:["5", "-5", "15", "-15"], a:0}, 
+                {q:"Jam 2200 ialah", o:["10 p.m.", "8 p.m.", "10 a.m.", "12 p.m."], a:0}, 
+                {q:"Isipadu kubus 2cm", o:["6", "4", "8", "16"], a:2}, 
+                {q:"Koordinat Asalan", o:["(1,1)", "(0,1)", "(1,0)", "(0,0)"], a:3}
             ]
         };
 
         let currentPool=[], cIdx=0, score=0, currentLevel="";
 
-        // --- INITIALIZATION ---
         window.onload = () => {
-            setTimeout(() => switchScreen('splash', 'main-app'), 2000);
             updateProfileUI();
-            // Set random fact
             document.getElementById('daily-fact-text').innerText = facts[Math.floor(Math.random() * facts.length)];
         };
 
-        // --- NAVIGATION ---
+        function startGame() {
+            if(navigator.vibrate) navigator.vibrate(50);
+            switchScreen('splash', 'main-app');
+            setTimeout(() => {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }, 500);
+        }
+
         function switchScreen(from, to) {
             document.getElementById(from).classList.replace('active-screen', 'hidden');
             document.getElementById(to).classList.replace('hidden', 'active-screen');
         }
 
         function navTo(tab) {
-            // UI Tabs
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById('tab-'+tab).classList.add('active');
             
-            // UI Nav Buttons
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             let navBtn = document.getElementById('nav-'+tab);
             if(navBtn) navBtn.classList.add('active');
 
-            // Reset States
             if(tab === 'quiz') {
                 document.getElementById('level-select-screen').style.display = 'block';
                 document.getElementById('gameplay-screen').style.display = 'none';
@@ -383,7 +559,6 @@
             }
         }
 
-        // --- NOTIFICATION ---
         function toggleNotif() {
             let el = document.getElementById('notif-overlay');
             el.style.display = el.style.display === 'block' ? 'none' : 'block';
@@ -393,16 +568,21 @@
             document.getElementById('notif-overlay').style.display = 'none';
         }
 
-        // --- MISSIONS ---
         function toggleMission(el) {
             el.classList.toggle('mission-done');
         }
 
-        // --- GAMEPLAY ---
+        // --- NEW NOTE TOGGLE FUNCTION ---
+        function toggleNote(el) {
+            el.classList.toggle('note-expanded');
+            // Haptic feedback small
+            if(navigator.vibrate) navigator.vibrate(20);
+        }
+
         function startLevel(lvl) {
             currentLevel = lvl;
             let pool = [...questionData[lvl]].sort(()=>Math.random()-0.5);
-            currentPool = pool.slice(0, 10); // Take 10
+            currentPool = pool.slice(0, 10); 
             cIdx = 0; score = 0;
 
             document.getElementById('level-select-screen').style.display='none';
@@ -414,16 +594,23 @@
         function loadQ() {
             if(cIdx >= currentPool.length) { finish(); return; }
             let q = currentPool[cIdx];
+            
             document.getElementById('q-idx').innerText = cIdx+1;
             document.getElementById('q-text').innerText = q.q;
             document.getElementById('p-bar').style.width = (cIdx/10*100)+"%";
             
+            // Trigger Animation Slide In
+            let card = document.getElementById('question-card-cont');
+            card.classList.remove('slide-in-right');
+            void card.offsetWidth; // Trigger reflow
+            card.classList.add('slide-in-right');
+            
             let area = document.getElementById('options-area');
             area.innerHTML = "";
-            q.options.forEach((o, i)=>{
+            q.o.forEach((optionText, i)=>{
                 let btn = document.createElement('button');
                 btn.className="btn-candy c-blue";
-                btn.innerText=o;
+                btn.innerText=optionText;
                 btn.onclick=()=>check(btn, i, q.a);
                 area.appendChild(btn);
             });
@@ -432,36 +619,60 @@
         function check(btn, sel, cor) {
             let btns = document.querySelectorAll('#options-area button');
             btns.forEach(b=>b.disabled=true);
-            if(sel===cor){ score++; btn.className="btn-candy c-green"; }
-            else { btn.className="btn-candy c-red"; btns[cor].className="btn-candy c-green"; }
-            setTimeout(()=>{cIdx++; loadQ()}, 1000);
+            
+            if(sel===cor){ 
+                score++; 
+                btn.className="btn-candy btn-correct-anim"; // Add pop effect
+                if(navigator.vibrate) navigator.vibrate([50, 50, 50]); // Vibrate 
+            } else { 
+                btn.className="btn-candy btn-wrong-anim"; // Add shake effect
+                btns[cor].className="btn-candy btn-correct-anim"; // Show correct one too
+                if(navigator.vibrate) navigator.vibrate(200); // Long vibrate error
+            }
+            setTimeout(()=>{cIdx++; loadQ()}, 1200);
         }
 
         function finish() {
             document.getElementById('gameplay-screen').style.display='none';
-            document.getElementById('result-screen').style.display='block';
-            document.getElementById('final-score').innerText = score+"/10";
+            let resScreen = document.getElementById('result-screen');
+            resScreen.style.display='block';
             
-            // XP Calculation
+            let finalScoreEl = document.getElementById('final-score');
+            let emojiEl = document.getElementById('result-emoji');
+            let titleEl = document.getElementById('result-title');
+            
+            finalScoreEl.innerText = score + "/10";
+            finalScoreEl.classList.remove('anim-high', 'anim-mid', 'anim-low');
+
+            if (score >= 8) {
+                emojiEl.innerText = "🤩";
+                titleEl.innerText = "Sangat Hebat!";
+                finalScoreEl.classList.add('anim-high');
+                confetti({particleCount:150, spread:90, origin:{y:0.6}, colors:['#00b894', '#fdcb6e']});
+            } else if (score >= 4) {
+                emojiEl.innerText = "🙂";
+                titleEl.innerText = "Boleh Tahan!";
+                finalScoreEl.classList.add('anim-mid');
+            } else {
+                emojiEl.innerText = "🥺";
+                titleEl.innerText = "Cuba Lagi Ya...";
+                finalScoreEl.classList.add('anim-low');
+            }
+            
             let xpGained = score * 10;
             userXP += xpGained;
             document.getElementById('xp-gained-text').innerText = `+${xpGained} XP Diperoleh!`;
-            
-            if(score > 6) confetti({particleCount:100, spread:70, origin:{y:0.6}});
 
             saveRecord(score);
             updateProfileUI();
         }
 
-        // --- RECORDS & PROFILE ---
         function saveRecord(score) {
             let date = new Date();
             let timeStr = date.getHours() + ":" + (date.getMinutes()<10?'0':'') + date.getMinutes();
             
-            // Add to history
             gameRecords.unshift({ level: currentLevel, score: score, time: timeStr });
             
-            // Update List UI
             let html = "";
             gameRecords.forEach(r => {
                 let colorClass = r.score >= 8 ? '#00b894' : r.score >= 5 ? '#fdcb6e' : '#ff7675';
